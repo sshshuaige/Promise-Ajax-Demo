@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .w {
+            margin: 20px auto;
+            width: 1200px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="w">
+        <h2>Ajax小demo</h2>
+        <h2>使用 Promise+Ajax 实现局部更新获取新的名言</h2>
+        <hr>
+    </header>
+    <main class="w">
+        <button>点击获取一句名言</button><br>
+        <h2 id="text"></h2>
+    </main>
+    
+
+</body>
+<script>
+    var btn = document.querySelector('button')
+    var text = document.querySelector('#text')
+    
+    btn.addEventListener('click', function(){
+        //封装一个获取名言的Promise的函数
+        function getSaying(url){
+            return new Promise((resolve, reject)=>{
+                const xhr = new XMLHttpRequest()
+                xhr.open('GET',url)
+                
+                xhr.onreadystatechange = function(){
+                    console.log('readyState变化了'+'@'+xhr.readyState)
+                    
+                    if(xhr.readyState === 4){
+                        if(xhr.status === 200){
+                            resolve(xhr.response)
+                        } else {
+                            reject(xhr.status)
+                    }
+                }
+            }
+                xhr.send()
+            })
+        }
+        getSaying('https://api.apiopen.top/api/sentences').then((value)=>{
+            let data = JSON.parse(value)
+            console.log(data)
+            text.innerHTML = data.result.name + '它来自' + data.result.from
+        },
+        (status)=>{
+            text.innerText = '状态码是'+ status
+        })
+    })
+</script>
+</html>
